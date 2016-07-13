@@ -6,14 +6,13 @@
 // software distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import UIKit
 
 /// An animation for a layout.
 public struct Animation {
 
     let arrangement: LayoutArrangement
-    let rootView: UIView
-    let direction: UIUserInterfaceLayoutDirection
+    let rootView: View
+    let direction: UserInterfaceLayoutDirection
 
     /// Apply the final state of the animation.
     /// Call this inside a UIKit animation block.

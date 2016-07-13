@@ -6,7 +6,7 @@
 // software distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import UIKit
+import CoreGraphics
 
 /**
  The frame of a layout and the frames of its sublayouts.
@@ -37,7 +37,7 @@ public struct LayoutArrangement {
 
      - returns: The root view. If a view was provided, then the same view will be returned, otherwise, a new one will be created.
      */
-    public func makeViews(inView view: UIView? = nil, direction: UIUserInterfaceLayoutDirection = .LeftToRight) -> UIView {
+    public func makeViews(inView view: View? = nil, direction: UserInterfaceLayoutDirection = .LeftToRight) -> View {
         return makeViews(in: view, direction: direction, prepareAnimation: false)
     }
 
@@ -49,7 +49,7 @@ public struct LayoutArrangement {
 
      ```
      let animation = nextLayout.arrangement().prepareAnimation(for: rootView, direction: .RightToLeft)
-     UIView.animateWithDuration(5.0, animations: {
+     View.animateWithDuration(5.0, animations: {
          animation.apply()
      })
      ```
@@ -59,7 +59,7 @@ public struct LayoutArrangement {
      
      MUST be run on the main thread.
      */
-    public func prepareAnimation(for view: UIView, direction: UIUserInterfaceLayoutDirection = .LeftToRight) -> Animation {
+    public func prepareAnimation(for view: View, direction: UserInterfaceLayoutDirection = .LeftToRight) -> Animation {
         makeViews(in: view, direction: direction, prepareAnimation: true)
         return Animation(arrangement: self, rootView: view, direction: direction)
     }
@@ -68,10 +68,10 @@ public struct LayoutArrangement {
      Helper function for `makeViews(in:direction:)` and `prepareAnimation(for:direction:)`.
      See the documentation for those two functions.
      */
-    private func makeViews(in view: UIView? = nil, direction: UIUserInterfaceLayoutDirection, prepareAnimation: Bool) -> UIView {
+    private func makeViews(in view: View? = nil, direction: UserInterfaceLayoutDirection, prepareAnimation: Bool) -> View {
         let recycler = ViewRecycler(rootView: view)
         let views = makeSubviews(from: recycler, prepareAnimation: prepareAnimation)
-        let rootView: UIView
+        let rootView: View
 
         if let view = view {
             for subview in views {
@@ -83,7 +83,7 @@ public struct LayoutArrangement {
             rootView = view
         } else {
             // We have multiple views so create a root view.
-            rootView = UIView(frame: frame)
+            rootView = View(frame: frame)
             for subview in views {
                 if !prepareAnimation {
                     // Unapply the offset that was applied in makeSubviews()
@@ -101,14 +101,14 @@ public struct LayoutArrangement {
     }
 
     /// Horizontally flips the view frames if direction does not match the user's language direction.
-    private func handleLayoutDirection(view: UIView, direction: UIUserInterfaceLayoutDirection) {
-        if UIApplication.sharedApplication().userInterfaceLayoutDirection != direction {
+    private func handleLayoutDirection(view: View, direction: UserInterfaceLayoutDirection) {
+        if Application.sharedApplication().userInterfaceLayoutDirection != direction {
             flipSubviewsHorizontally(view)
         }
     }
 
     /// Flips the right and left edges of the view's subviews.
-    private func flipSubviewsHorizontally(view: UIView) {
+    private func flipSubviewsHorizontally(view: View) {
         for subview in view.subviews {
             subview.frame.origin.x = view.frame.width - subview.frame.maxX
             flipSubviewsHorizontally(subview)
@@ -116,8 +116,8 @@ public struct LayoutArrangement {
     }
 
     /// Returns the views for the layout and all of its sublayouts.
-    private func makeSubviews(from recycler: ViewRecycler, prepareAnimation: Bool) -> [UIView] {
-        let subviews = sublayouts.flatMap({ (sublayout: LayoutArrangement) -> [UIView] in
+    private func makeSubviews(from recycler: ViewRecycler, prepareAnimation: Bool) -> [View] {
+        let subviews = sublayouts.flatMap({ (sublayout: LayoutArrangement) -> [View] in
             return sublayout.makeSubviews(from: recycler, prepareAnimation: prepareAnimation)
         })
         // If we are preparing an animation, then we don't want to update frames or configure views.
@@ -138,23 +138,6 @@ public struct LayoutArrangement {
                 }
             }
             return subviews
-        }
-    }
-}
-
-extension UIView {
-
-    /**
-     Similar to `addSubview()` except if `maintainCoordinates` is true, then the view's frame
-     will be adjusted so that its absolute position on the screen does not change.
-     */
-    private func addSubview(view: UIView, maintainCoordinates: Bool) {
-        if maintainCoordinates {
-            let frame = view.convertRect(view.frame, toCoordinateSpace: UIScreen.mainScreen().fixedCoordinateSpace)
-            addSubview(view)
-            view.frame = view.convertRect(frame, fromCoordinateSpace: UIScreen.mainScreen().fixedCoordinateSpace)
-        } else {
-            addSubview(view)
         }
     }
 }

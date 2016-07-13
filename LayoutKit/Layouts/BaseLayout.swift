@@ -6,15 +6,14 @@
 // software distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import UIKit
 
 /**
  A base class for layouts.
- This layout does not require a UIView at runtime unless a configuration block has been provided.
+ This layout does not require a view at runtime unless a configuration block has been provided.
 
  The class is public so that makeView() can conform to the public Layout protocol.
  */
-public class BaseLayout<View: UIView> {
+public class BaseLayout<V: View> {
 
     /// The layout's alignment inside of the rect that it is assigned during arrangement.
     public let alignment: Alignment
@@ -27,21 +26,21 @@ public class BaseLayout<View: UIView> {
     public let tag: Int
 
     /// A configuration block that is run on the main thread after the view is created.
-    public let config: (View -> Void)?
+    public let config: (V -> Void)?
 
-    public init(alignment: Alignment, flexibility: Flexibility, tag: Int = 0, config: (View -> Void)?) {
+    public init(alignment: Alignment, flexibility: Flexibility, tag: Int = 0, config: (V -> Void)?) {
         self.alignment = alignment
         self.flexibility = flexibility
         self.tag = tag
         self.config = config
     }
 
-    public func makeView(from recycler: ViewRecycler, configure: Bool) -> UIView? {
+    public func makeView(from recycler: ViewRecycler, configure: Bool) -> View? {
         guard let config = config else {
             // Nothing needs to be configured, so this layout doesn't require a UIView.
             return nil
         }
-        let view: View = recycler.makeView(tag: tag)
+        let view: V = recycler.makeView(tag: tag)
         if configure {
             config(view)
         }

@@ -6,7 +6,7 @@
 // software distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import UIKit
+import CoreGraphics
 
 /**
  A protocol for types that layout view frames.
@@ -74,7 +74,7 @@ public protocol Layout {
 
      MUST be run on the main thread.
      */
-    func makeView(from recycler: ViewRecycler, configure: Bool) -> UIView?
+    func makeView(from recycler: ViewRecycler, configure: Bool) -> View?
 
     /**
      The flexibility of the layout.

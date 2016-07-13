@@ -13,7 +13,10 @@ class LayoutArrangementTests: XCTestCase {
 
     func testAnimation() {
 
-        var captured: UIView? = nil
+        var captured: View? = nil
+
+        // An empty config block that forces a view to get created.
+        let emptyConfig: View -> Void = { _ in }
 
         let before = InsetLayout(
             inset: 10,
@@ -23,39 +26,32 @@ class LayoutArrangementTests: XCTestCase {
                 distribution: .fillEqualSpacing,
                 tag: 2,
                 sublayouts: [
-                    SizeLayout<UIView>(
+                    SizeLayout<View>(
                         width: 100,
                         height: 100,
                         alignment: .topLeading,
                         tag: 3,
-                        sublayout: SizeLayout<UIView>(
+                        sublayout: SizeLayout<View>(
                             width: 10,
                             height: 10,
                             alignment: .bottomTrailing,
                             tag: 5,
                             config: { view in
-                                view.backgroundColor = UIColor.redColor()
                                 captured = view
                             }
                         ),
-                        config: { view in
-                            view.backgroundColor = UIColor.grayColor()
-                        }
+                        config: emptyConfig
                     ),
-                    SizeLayout<UIView>(
+                    SizeLayout<View>(
                         width: 80,
                         height: 80,
                         alignment: .bottomTrailing,
                         tag: 6,
-                        config: { view in
-                            view.backgroundColor = UIColor.lightGrayColor()
-                        }
+                        config: emptyConfig
                     )
                 ]
             ),
-            config: { view in
-                view.backgroundColor = UIColor.blackColor()
-            }
+            config: emptyConfig
         )
 
         let after = InsetLayout(
@@ -66,42 +62,35 @@ class LayoutArrangementTests: XCTestCase {
                 distribution: .fillEqualSpacing,
                 tag: 2,
                 sublayouts: [
-                    SizeLayout<UIView>(
+                    SizeLayout<View>(
                         width: 100,
                         height: 100,
                         alignment: .topLeading,
                         tag: 3,
-                        config: { view in
-                            view.backgroundColor = UIColor.grayColor()
-                        }
+                        config: emptyConfig
                     ),
-                    SizeLayout<UIView>(
+                    SizeLayout<View>(
                         width: 50,
                         height: 50,
                         alignment: .bottomTrailing,
                         tag: 6,
-                        sublayout: SizeLayout<UIView>(
+                        sublayout: SizeLayout<View>(
                             width: 20,
                             height: 20,
                             alignment: .topLeading,
                             tag: 5,
                             config: { view in
-                                view.backgroundColor = UIColor.redColor()
                                 captured = view
                             }
                         ),
-                        config: { view in
-                            view.backgroundColor = UIColor.lightGrayColor()
-                        }
+                        config: emptyConfig
                     )
                 ]
             ),
-            config: { view in
-                view.backgroundColor = UIColor.blackColor()
-            }
+            config: emptyConfig
         )
 
-        let rootView = UIView(frame: CGRect(x: 0, y: 0, width: 250, height: 250))
+        let rootView = View(frame: CGRect(x: 0, y: 0, width: 250, height: 250))
         before.arrangement(width: 250, height: 250).makeViews(inView: rootView)
         XCTAssertEqual(captured?.frame, CGRect(x: 90, y: 90, width: 10, height: 10))
 

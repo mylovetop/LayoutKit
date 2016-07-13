@@ -6,7 +6,7 @@
 // software distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import UIKit
+//import UIKit
 
 /**
  Provides APIs to recycle views by tag.
@@ -17,11 +17,11 @@ import UIKit
  */
 public class ViewRecycler {
 
-    private var viewsByTag = [Int: UIView]()
-    private var untaggedViews = Set<UIView>()
+    private var viewsByTag = [Int: View]()
+    private var untaggedViews = Set<View>()
 
     /// Retains all subviews of rootView for recycling.
-    public init(rootView: UIView?) {
+    public init(rootView: View?) {
         rootView?.walkSubviews { (view) in
             if view.tag != 0 {
                 self.viewsByTag[view.tag] = view
@@ -33,7 +33,7 @@ public class ViewRecycler {
 
     /// Marks a view as recycled so that `purgeViews()` doesn't remove it from the view hierarchy.
     /// It is only necessary to call this if a view is reused without calling `makeView(tag:)`.
-    public func markViewAsRecycled(view: UIView) {
+    public func markViewAsRecycled(view: View) {
         if view.tag == 0 {
             untaggedViews.remove(view)
         } else {
@@ -42,7 +42,7 @@ public class ViewRecycler {
     }
 
     /// Creates or recycles a view of the desired type and tag.
-    public func makeView<T: UIView>(tag tag: Int) -> T {
+    public func makeView<T: View>(tag tag: Int) -> T {
         guard let view = viewsByTag[tag] as? T else {
             let t = T()
             t.tag = tag
@@ -66,10 +66,10 @@ public class ViewRecycler {
     }
 }
 
-extension UIView {
+extension View {
 
     /// Calls visitor for each transitive subview.
-    func walkSubviews(@noescape visitor visitor: (UIView) -> Void) {
+    func walkSubviews(@noescape visitor visitor: (View) -> Void) {
         for subview in subviews {
             visitor(subview)
             subview.walkSubviews(visitor: visitor)

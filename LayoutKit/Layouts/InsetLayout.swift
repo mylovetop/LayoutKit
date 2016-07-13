@@ -6,21 +6,21 @@
 // software distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import UIKit
+import CoreGraphics
 
 /**
  A layout that insets another layout.
-*/
-public class InsetLayout: BaseLayout<UIView>, Layout {
+ */
+public class InsetLayout: BaseLayout<View>, Layout {
     
-    public let insets: UIEdgeInsets
+    public let insets: EdgeInsets
     public let sublayout: Layout
 
-    public init(insets: UIEdgeInsets,
+    public init(insets: EdgeInsets,
                 alignment: Alignment = Alignment.fill,
                 tag: Int = 0,
                 sublayout: Layout,
-                config: (UIView -> Void)? = nil) {
+                config: (View -> Void)? = nil) {
         self.insets = insets
         self.sublayout = sublayout
         super.init(alignment: alignment, flexibility: sublayout.flexibility, tag: tag, config: config)
@@ -30,8 +30,8 @@ public class InsetLayout: BaseLayout<UIView>, Layout {
                             alignment: Alignment = Alignment.fill,
                             tag: Int = 0,
                             sublayout: Layout,
-                            config: (UIView -> Void)? = nil) {
-        let insets = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
+                            config: (View -> Void)? = nil) {
+        let insets = EdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
         self.init(insets: insets, alignment: alignment, tag: tag, sublayout: sublayout, config: config)
     }
 
